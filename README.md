@@ -12,9 +12,9 @@ La señal GPS puede perderse en túneles, edificios, zonas de interferencia o en
 
 ## Simulador de datos sintéticos
 
-Dado que en las etapas iniciales del proyecto no se disponía de un prototipo físico, se desarrolló un simulador paralelo para generar datos sintéticos de sensores que permitieran avanzar con el desarrollo y validación de los modelos.
+Dado que en las etapas iniciales del proyecto no se disponía de un prototipo físico, se desarrolló un simulador para generar datos sintéticos de sensores que permitieran avanzar con el desarrollo y validación de los modelos.
 
-El simulador está disponible en el repositorio [quanvia_simulator](https://github.com/salvalago23/quanvia_simulator). Genera trayectorias 3D parametrizables con ruido gaussiano y produce los mismos vectores de sensores que el hardware real (acelerómetro, giroscopio, magnetómetro, GPS y altímetro).
+El simulador está integrado en este repositorio bajo `simulator/` (originalmente en [quanvia_simulator](https://github.com/salvalago23/quanvia_simulator)). Genera trayectorias 3D parametrizables con ruido gaussiano y produce los mismos vectores de sensores que el hardware real (acelerómetro, giroscopio, magnetómetro, GPS y altímetro). Consulta `simulator/README.md` para instrucciones de uso y ejemplos de ejecución.
 
 ---
 
@@ -22,13 +22,21 @@ El simulador está disponible en el repositorio [quanvia_simulator](https://gith
 
 ```
 gps_quanvia/
+├── simulator/                  # Simulador de datos sintéticos (ver simulator/README.md)
+│   ├── src/
+│   │   ├── simulator.py        # Lógica de simulación (trayectorias, sensores, ruido)
+│   │   ├── config.py           # Parámetros configurables
+│   │   ├── utils.py            # Logger y manejo de errores
+│   │   └── main.py
+│   ├── run.py                  # Punto de entrada CLI
+│   └── requirements.txt
 ├── lstm_models/
 │   ├── data/
-│   │   ├── raw_data/       # Datos crudos del prototipo (11 trayectorias reales)
-│   │   ├── clean_data/     # Datos normalizados y preprocesados
-│   │   ├── train/          # Partición de entrenamiento (8 archivos)
-│   │   └── test/           # Partición de test (3 archivos)
-│   ├── models/             # Modelos entrenados en formato .keras
+│   │   ├── raw_data/           # Datos crudos del prototipo (11 trayectorias reales)
+│   │   ├── clean_data/         # Datos normalizados y preprocesados
+│   │   ├── train/              # Partición de entrenamiento (8 archivos)
+│   │   └── test/               # Partición de test (3 archivos)
+│   ├── models/                 # Modelos entrenados en formato .keras
 │   ├── csv_processing.ipynb    # Preprocesamiento y normalización
 │   ├── lstm.ipynb              # Modelo LSTM
 │   ├── gru.ipynb               # Modelo GRU
@@ -40,6 +48,7 @@ gps_quanvia/
 │   ├── gpstesteo/              # Sketch Arduino para lectura de GPS (TinyGPSPlus)
 │   ├── Magnetometro_MotionCal/ # Calibración del magnetómetro
 │   └── libraries/              # Bibliotecas de sensores (Adafruit BMP3XX, etc.)
+├── requirements.txt
 ├── Informe_tecnico.pdf
 └── Prototipo_sistema_navegación_Quanvia.pdf
 ```
