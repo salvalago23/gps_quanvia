@@ -134,12 +134,27 @@ Sensores → [buffer de N muestras] → LSTM → delta_Lat, delta_Lng
 
 ## Hardware (prototipo)
 
-El firmware de adquisición está en `src/` como sketches de Arduino:
+El firmware principal (`src/quanvia_code/quanvia_code.ino`) gestiona 5 sensores simultáneamente con planificación no bloqueante basada en timestamps:
 
+| Sensor | Frecuencia | Datos |
+|---|---|---|
+| IMU (DFRobot WT61PC) | 12 Hz | Aceleración (x,y,z), giroscopio (x,y,z), ángulos de inclinación |
+| Magnetómetro (MMC5603) | 5 Hz | Campo magnético (x,y,z), rumbo calculado |
+| Barómetro (BMP3XX) | 5 Hz | Presión, altitud |
+| GPS (TinyGPS++) | 1 Hz | Latitud, longitud, velocidad, HDOP |
+
+Características destacadas del firmware:
+- **Calibración hard iron / soft iron del magnetómetro**: aplica una matriz de transformación afín 3×3 + offsets medidos con MotionCal para corregir el sesgo del sensor y la distorsión elipsoidal.
+- **Heading con corrección de declinación magnética**: corrige la declinación local (−1.3833°).
+- **Media móvil incremental en streaming**: utiliza la fórmula de Welford para evitar la acumulación de errores en punto flotante.
+- **Escritura en SD por batches**: escribe cada 10 segundos para minimizar el impacto de la latencia de I/O en las lecturas de sensores.
+- **Recuperación automática del barómetro**: cicla la alimentación del sensor mediante un transistor en el pin 9 si deja de responder.
+
+Bibliotecas Arduino necesarias: `SdFat`, `TinyGPS++`, `Adafruit_MMC56x3`, `Adafruit_BMP3XX`, `DFRobot_WT61PC`, `AltSoftSerial`.
+
+Otros sketches en `src/`:
 - **`gpstesteo.ino`**: lectura de módulo GPS via UART (`TinyGPSPlus`), extrayendo latitud, longitud, altitud, velocidad, rumbo y número de satélites a 1 Hz.
-- **`Magnetometro_MotionCal.ino`** + `MotionCal.exe`: calibración del magnetómetro para compensar interferencias del entorno.
-
-Las bibliotecas de sensores incluidas en `src/libraries/` cubren el barómetro/altímetro BMP3XX de Adafruit.
+- **`Magnetometro_MotionCal.ino`** + `MotionCal.exe`: calibración del magnetómetro para compensar interferencias del entorno con MotionCal. Las bibliotecas necesarias están en `src/libraries/`.
 
 ---
 
